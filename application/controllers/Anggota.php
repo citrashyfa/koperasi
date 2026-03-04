@@ -3,28 +3,39 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Anggota extends CI_Controller {
 
+    public function __construct() {
+        parent::__construct();
+        $this->load->model('M_koperasi'); // Memanggil model buatanmu
+    }
+
+    // Menampilkan daftar anggota
     public function index() {
-        // Menampilkan daftar anggota
-        $data['anggota'] = $this->db->get('anggota')->result();
+        $data['anggota'] = $this->M_koperasi->get_semua_anggota();
+        
+        $this->load->view('layout/header');
         $this->load->view('anggota/v_daftar', $data);
+        $this->load->view('layout/footer');
     }
 
+    // Menampilkan form tambah
     public function tambah() {
-        // Menampilkan form tambah
+        $this->load->view('layout/header');
         $this->load->view('anggota/v_tambah');
+        $this->load->view('layout/footer');
     }
 
-    public function simpan() {
+    // Memproses data dari form ke database
+    public function proses_simpan() {
         $data = [
-            'kode_anggota' => $this->input->post('kode_anggota'),
-            'nama_lengkap' => $this->input->post('nama_lengkap'),
+            'kode_anggota' => $this->input->post('kode'),
+            'nama_lengkap' => $this->input->post('nama'),
             'alamat'       => $this->input->post('alamat'),
+            'no_telp'      => $this->input->post('telp'),
             'tgl_gabung'   => date('Y-m-d'),
             'status'       => 'aktif'
         ];
 
-        $this->db->insert('anggota', $data);
-        $this->session->set_flashdata('pesan', 'Data anggota berhasil disimpan!');
-        redirect('anggota');
+        $this->M_koperasi->simpan_anggota($data);
+        redirect('anggota'); // Kembali ke daftar anggota
     }
 }

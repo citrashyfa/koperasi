@@ -5,75 +5,60 @@ class Angsuran extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        // Load Database, Session, dan Helper agar tidak error
-        $this->load->database();
-        $this->load->library(['session']);
-        $this->load->helper(['url']);
+        $this->load->model('M_koperasi');
+        $this->load->library(['session', 'form_validation']);
     }
 
-    // Fungsi untuk menampilkan form bayar
+    // Menampilkan daftar pinjaman yang aktif (yang harus dicicil)
     public function index() {
         $this->db->select('pinjaman.*, anggota.nama_lengkap');
         $this->db->from('pinjaman');
         $this->db->join('anggota', 'pinjaman.id_anggota = anggota.id_anggota');
-        $this->db->where('pinjaman.status_pinjaman', 'disetujui');
+        $this->db->where('status_pinjaman', 'disetujui');
         $data['pinjaman_aktif'] = $this->db->get()->result();
 
-        $this->load->view('angsuran/v_bayar', $data);
+        $this->load->view('layout/header');
+        $this->load->view('angsuran/v_daftar_pinjaman', $data);
+        $this->load->view('layout/footer');
     }
 
-    // Fungsi proses bayar
-    public function bayar() {
+    // Form untuk bayar angsuran
+    public function bayar($id_pinjaman) {
+        $this->db->select('pinjaman.*, anggota.nama_lengkap');
+        $this->db->from('pinjaman');
+        $this->db->join('anggota', 'pinjaman.id_anggota = anggota.id_anggota');
+        $this->db->where('id_pinjaman', $id_pinjaman);
+        $data['p'] = $this->db->get()->row();
+
+        // Hitung sudah angsuran ke berapa
+        $data['angsuran_ke'] = $this->db->where('id_pinjaman', $id_pinjaman)->count_all_results('angsuran') + 1;
+
+        $this->load->view('layout/header');
+        $this->load->view('angsuran/v_bayar', $data);
+        $this->load->view('layout/footer');
+    }
+
+    // Eksekusi Simpan Pembayaran
+    public function proses_bayar() {
         $id_pinjaman = $this->input->post('id_pinjaman');
-        
-        // 1. Ambil data pinjaman
-        $pinjaman = $this->db->get_where('pinjaman', ['id_pinjaman' => $id_pinjaman])->row();
+        $tenor_total = $this->input->post('tenor_total');
+        $angsuran_ke = $this->input->post('angsuran_ke');
 
-        // Safety check: Mencegah error jika ID tidak ada
-        if (!$pinjaman) {
-            $this->session->set_flashdata('error', 'Data pinjaman tidak ditemukan!');
-            redirect('angsuran/index');
-        }
-
-        // 2. Hitung ini angsuran ke berapa
-        $cek_angsuran = $this->db->get_where('angsuran', ['id_pinjaman' => $id_pinjaman])->num_rows();
-        $angsuran_ke  = $cek_angsuran + 1;
-
-        // 3. Cek apakah sudah melebihi tenor (mencegah double bayar jika sudah lunas)
-        if ($cek_angsuran >= $pinjaman->lama_angsuran) {
-            $this->session->set_flashdata('error', 'Pinjaman ini sudah lunas!');
-            redirect('angsuran/riwayat');
-        }
-
-        // 4. Siapkan data insert
         $data = [
             'id_pinjaman'   => $id_pinjaman,
+            'jumlah_bayar'  => $this->input->post('jumlah_bayar'),
             'angsuran_ke'   => $angsuran_ke,
-            'jumlah_bayar'  => $pinjaman->angsuran_bulanan,
-            'tgl_bayar'     => date('Y-m-d')
+            'tgl_bayar'     => date('Y-m-d H:i:s')
         ];
 
-        $this->db->insert('angsuran', $data);
+        $this->M_koperasi->insert_angsuran($data);
 
-        // 5. Logika Pelunasan Otomatis
-        if ($angsuran_ke >= $pinjaman->lama_angsuran) {
-            $this->db->where('id_pinjaman', $id_pinjaman);
-            $this->db->update('pinjaman', ['status_pinjaman' => 'lunas']);
+        // LOGIKA OTOMATIS: Jika angsuran sudah mencapai batas tenor, ubah status pinjaman jadi LUNAS
+        if ($angsuran_ke >= $tenor_total) {
+            $this->M_koperasi->update_status_pinjaman($id_pinjaman, 'lunas');
         }
 
-        $this->session->set_flashdata('pesan', 'Pembayaran angsuran ke-'.$angsuran_ke.' berhasil!');
-        redirect('angsuran/riwayat');
-    }
-
-    // Fungsi untuk melihat riwayat
-    public function riwayat() {
-        $this->db->select('angsuran.*, anggota.nama_lengkap, pinjaman.jumlah_pinjaman');
-        $this->db->from('angsuran');
-        $this->db->join('pinjaman', 'angsuran.id_pinjaman = pinjaman.id_pinjaman');
-        $this->db->join('anggota', 'pinjaman.id_anggota = anggota.id_anggota');
-        $this->db->order_by('tgl_bayar', 'DESC');
-        $data['riwayat'] = $this->db->get()->result();
-
-        $this->load->view('angsuran/v_riwayat', $data);
+        $this->session->set_flashdata('success', 'Pembayaran angsuran berhasil dicatat!');
+        redirect('angsuran');
     }
 }
