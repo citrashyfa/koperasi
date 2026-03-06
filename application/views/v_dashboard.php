@@ -1,90 +1,165 @@
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Dashboard Utama Koperasi</h1>
-    <button onclick="window.print()" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-        <i class="fas fa-print fa-sm text-white-50"></i> Cetak Laporan
-    </button>
-</div>
+<style>
+    /* Desain Banner Modern - Tanpa Foto */
+    .banner-custom {
+        background: linear-gradient(135deg, #0d6871 0%, #00b894 100%);
+        border-radius: 24px;
+        padding: 60px 50px;
+        position: relative;
+        overflow: hidden; 
+        color: white;
+        box-shadow: 0 20px 40px rgba(13, 104, 113, 0.15);
+        margin-bottom: 40px; 
+    }
 
-<div class="row">
+    .banner-content { 
+        position: relative; 
+        z-index: 2; 
+    }
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2 bg-primary text-white">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">Total Anggota</div>
-                        <div class="h5 mb-0 font-weight-bold"><?= $total_anggota ?> Orang</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-users fa-2x text-white-50"></i>
-                    </div>
+    /* Statistik Card Minimalis */
+    .stat-card {
+        background: white;
+        border: none;
+        border-radius: 20px;
+        padding: 25px;
+        transition: 0.3s;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.02);
+        height: 100%;
+    }
+
+    .stat-card:hover { 
+        transform: translateY(-5px); 
+        box-shadow: 0 15px 35px rgba(0,0,0,0.06); 
+    }
+    
+    .icon-circle {
+        width: 55px; 
+        height: 55px;
+        border-radius: 15px;
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+
+    /* Section Layanan */
+    .service-card {
+        background: white;
+        border-radius: 25px;
+        transition: 0.3s;
+        border: none;
+        height: 100%;
+    }
+    .service-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="banner-custom shadow-sm">
+        <div class="row align-items-center banner-content">
+            <div class="col-lg-12 text-left">
+                <span class="badge badge-pill mb-3 px-3 py-2" style="background: rgba(255,255,255,0.2); color: white;">
+                    <i class="fas fa-check-circle mr-2"></i> Sistem Koperasi Terintegrasi
+                </span>
+                <h1 class="font-weight-bold mb-3" style="font-size: 3rem; letter-spacing: -1px;">
+                    Halo, Admin!
+                </h1>
+                <p class="lead mb-4" style="opacity: 0.9; max-width: 600px;">
+                    Kelola ekosistem ekonomi bersama <strong style="color: #fff;">Mitra Sejahtera</strong> dengan lebih transparan, cepat, dan aman setiap harinya.
+                </p>
+                <div class="d-flex">
+                    <a href="<?= base_url('index.php/anggota') ?>" class="btn btn-light btn-lg px-4 py-3 mr-3 shadow-sm" style="border-radius: 14px; color: #0d6871; font-weight: 700; font-size: 0.95rem;">
+                        Kelola Anggota <i class="fas fa-users ml-2"></i>
+                    </a>
+                    <a href="<?= base_url('index.php/laporan') ?>" class="btn btn-outline-light btn-lg px-4 py-3" style="border-radius: 14px; font-weight: 600; font-size: 0.95rem; border-width: 2px;">
+                        Lihat Laporan
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-success shadow h-100 py-2 bg-success text-white">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">Total Simpanan</div>
-                        <div class="h5 mb-0 font-weight-bold">Rp <?= number_format($total_simpanan, 0, ',', '.') ?></div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-cash-register fa-2x text-white-50"></i>
-                    </div>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="stat-card d-flex align-items-center shadow-sm">
+                <div class="icon-circle mr-3" style="background: rgba(0, 184, 148, 0.1); color: #00b894;">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted small font-weight-bold mb-1">TOTAL ANGGOTA</h6>
+                    <h3 class="font-weight-bold mb-0 text-dark">
+                        <?= number_format($total_anggota, 0, ',', '.'); ?>
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="stat-card d-flex align-items-center shadow-sm">
+                <div class="icon-circle mr-3" style="background: rgba(13, 104, 113, 0.1); color: #0d6871;">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted small font-weight-bold mb-1">TOTAL SIMPANAN</h6>
+                    <h3 class="font-weight-bold mb-0 text-dark">
+                        Rp <?= number_format($total_simpanan, 0, ',', '.'); ?>
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="stat-card d-flex align-items-center shadow-sm">
+                <div class="icon-circle mr-3" style="background: rgba(108, 92, 231, 0.1); color: #6c5ce7;">
+                    <i class="fas fa-hand-holding-usd"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted small font-weight-bold mb-1">TOTAL PINJAMAN</h6>
+                    <h3 class="font-weight-bold mb-0 text-dark">
+                        Rp <?= number_format($total_pinjaman, 0, ',', '.'); ?>
+                    </h3>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-danger shadow h-100 py-2 bg-danger text-white">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">Pinjaman Keluar</div>
-                        <div class="h5 mb-0 font-weight-bold">Rp <?= number_format($total_pinjaman, 0, ',', '.') ?></div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-hand-holding-usd fa-2x text-white-50"></i>
-                    </div>
-                </div>
-            </div>
+    <div class="row mt-5 mb-4 text-center">
+        <div class="col-12">
+            <h2 class="font-weight-bold text-dark">Layanan <span style="color: #0d6871;">Mitra Sejahtera</span></h2>
+            <p class="text-muted">Solusi digital terintegrasi untuk berbagai kebutuhan koperasi Anda</p>
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-warning shadow h-100 py-2 bg-warning text-dark">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">Kas Koperasi</div>
-                        <div class="h5 mb-0 font-weight-bold">Rp <?= number_format($kas_koperasi, 0, ',', '.') ?></div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-university fa-2x text-black-50"></i>
-                    </div>
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="service-card text-center p-5 shadow-sm" style="border-bottom: 5px solid #00b894;">
+                <div class="mb-4 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: rgba(0, 184, 148, 0.1); border-radius: 20px;">
+                    <i class="fas fa-piggy-bank" style="font-size: 2rem; color: #00b894;"></i>
                 </div>
+                <h4 class="font-weight-bold mb-3">Mitra KSP</h4>
+                <p class="text-muted small">Optimalkan operasional simpan pinjam Anda dengan sistem yang lebih cepat dan aman.</p>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-lg-12 mb-4">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Status Sistem</h6>
+        <div class="col-lg-4 mb-4">
+            <div class="service-card text-center p-5 shadow-sm" style="border-bottom: 5px solid #0d6871;">
+                <div class="mb-4 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: rgba(13, 104, 113, 0.1); border-radius: 20px;">
+                    <i class="fas fa-store" style="font-size: 2rem; color: #0d6871;"></i>
+                </div>
+                <h4 class="font-weight-bold mb-3">Mitra KSU</h4>
+                <p class="text-muted small">Tingkatkan efisiensi koperasi serba usaha dengan manajemen retail terintegrasi.</p>
             </div>
-            <div class="card-body text-center">
-                <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 15rem;" src="https://undraw.co/api/illustrations/svg/undraw_finance_re_gnv2" alt="Ilustrasi Keuangan">
-                <p>Selamat Datang, <b>Admin!</b> Data yang ditampilkan di atas bersifat real-time berdasarkan transaksi terbaru di database.</p>
-                <a href="<?= base_url('anggota/tambah') ?>" class="btn btn-primary btn-icon-split">
-                    <span class="icon text-white-50"><i class="fas fa-user-plus"></i></span>
-                    <span class="text">Tambah Anggota Baru</span>
-                </a>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="service-card text-center p-5 shadow-sm" style="border-bottom: 5px solid #6c5ce7;">
+                <div class="mb-4 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: rgba(108, 92, 231, 0.1); border-radius: 20px;">
+                    <i class="fas fa-balance-scale" style="font-size: 2rem; color: #6c5ce7;"></i>
+                </div>
+                <h4 class="font-weight-bold mb-3">Mitra Syariah</h4>
+                <p class="text-muted small">Wujudkan pengelolaan syariah yang transparan sesuai prinsip bagi hasil.</p>
             </div>
         </div>
     </div>

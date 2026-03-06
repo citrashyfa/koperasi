@@ -1,44 +1,39 @@
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Daftar Pengajuan Pinjaman</h6>
-    </div>
-    <div class="card-body">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Nama Anggota</th>
-                    <th>Jumlah Pinjam</th>
-                    <th>Tenor (Bulan)</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach($pinjaman as $p): ?>
-                <tr>
-                    <td><?= $p->nama_lengkap ?></td>
-                    <td>Rp <?= number_format($p->jumlah_pinjaman) ?></td>
-                    <td><?= $p->lama_angsuran ?> Bulan</td>
-                    <td>
-                        <?php if($p->status_pinjaman == 'proses'): ?>
-                            <span class="badge badge-warning">Menunggu</span>
-                        <?php elseif($p->status_pinjaman == 'disetujui'): ?>
-                            <span class="badge badge-success">Disetujui</span>
-                        <?php else: ?>
-                            <span class="badge badge-danger">Ditolak</span>
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <?php if($p->status_pinjaman == 'proses'): ?>
-                            <a href="<?= base_url('pinjaman/setujui/'.$p->id_pinjaman) ?>" class="btn btn-sm btn-success">Setujui</a>
-                            <a href="<?= base_url('pinjaman/tolak/'.$p->id_pinjaman) ?>" class="btn btn-sm btn-danger">Tolak</a>
-                        <?php else: ?>
-                            <button class="btn btn-sm btn-secondary" disabled>Selesai</button>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+<div class="container-fluid p-4">
+    <div class="card shadow border-0">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="m-0 font-weight-bold text-primary">Daftar Anggota Koperasi</h5>
+            <a href="<?= base_url('index.php/anggota/tambah'); ?>" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Tambah Anggota
+            </a>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <thead class="bg-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Kode</th>
+                        <th>Nama Lengkap</th>
+                        <th>Alamat</th>
+                        <th>No. Telp</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $no=1; foreach($anggota as $row): ?>
+                    <tr>
+                        <td><?= $no++; ?></td>
+                        <td><?= $row['kode_anggota']; ?></td>
+                        <td><?= $row['nama_lengkap']; ?></td>
+                        <td><?= $row['alamat']; ?></td>
+                        <td><?= $row['no_telp']; ?></td>
+                        <td>
+                            <button class="btn btn-sm btn-warning text-white">Edit</button>
+                            <button class="btn btn-sm btn-danger">Hapus</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

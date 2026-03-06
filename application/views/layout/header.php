@@ -2,39 +2,124 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Koperasi Syariah - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitra Sejahtera - Solusi Digital Koperasi</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        body { overflow-x: hidden; background-color: #f4f6f9; }
-        #wrapper { display: flex; width: 100%; }
-        #sidebar-wrapper { min-height: 100vh; width: 250px; background: #2d3436; color: white; transition: all 0.3s; }
-        .sidebar-heading { padding: 20px; font-size: 1.2rem; background: #00b894; color: white; text-align: center; }
-        .list-group-item { background: transparent; color: #dfe6e9; border: none; padding: 15px 25px; }
-        .list-group-item:hover { background: #636e72; color: white; text-decoration: none; }
-        .list-group-item i { margin-right: 10px; width: 20px; }
-        #page-content-wrapper { width: 100%; }
-        .navbar { background: white !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        body { background-color: #f8fafb; font-family: 'Segoe UI', Roboto, sans-serif; }
+        
+        /* Navbar Utama ala eKoperasi */
+        .navbar-ekop {
+            background: white !important;
+            padding: 15px 50px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .brand-logo {
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: #0d6871; /* Warna hijau gelap profesional */
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-logo i {
+            color: #00b894; /* Warna toska icon */
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        /* Menu Navigasi Tengah */
+        .nav-link-custom {
+            color: #4a5568 !important;
+            font-weight: 600;
+            margin: 0 15px;
+            font-size: 0.95rem;
+            transition: 0.3s;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .nav-link-custom:hover, .nav-link-custom.active {
+            color: #0d6871 !important;
+        }
+
+        /* Garis bawah ungu/biru ala eKoperasi saat aktif */
+        .nav-link-custom.active::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background: #6c5ce7; /* Warna ungu aksen menu aktif */
+            bottom: 0;
+            left: 25%;
+            border-radius: 10px;
+        }
+
+        /* Tombol Keluar di Kanan */
+        .btn-logout {
+            background-color: #ff7675;
+            color: white !important;
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: 0.3s;
+            border: none;
+        }
+
+        .btn-logout:hover {
+            background-color: #d63031;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255,118,117,0.3);
+        }
+
+        .container-main {
+            padding: 40px 50px;
+        }
     </style>
 </head>
 <body>
-<div id="wrapper">
-    <div id="sidebar-wrapper">
-        <div class="sidebar-heading"><strong>KOPERASI KITA</strong></div>
-        <div class="list-group list-group-flush">
-            <a href="<?= base_url('dashboard') ?>" class="list-group-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-            <a href="<?= base_url('anggota') ?>" class="list-group-item"><i class="fas fa-users"></i> Data Anggota</a>
-            <a href="<?= base_url('simpanan') ?>" class="list-group-item"><i class="fas fa-wallet"></i> Simpanan</a>
-            <a href="<?= base_url('pinjaman') ?>" class="list-group-item"><i class="fas fa-hand-holding-usd"></i> Pinjaman</a>
-            <a href="<?= base_url('angsuran') ?>" class="list-group-item"><i class="fas fa-calendar-check"></i> Angsuran</a>
-            <hr style="border-color: rgba(255,255,255,0.1)">
-            <a href="<?= base_url('auth/logout') ?>" class="list-group-item text-danger"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+
+<nav class="navbar navbar-expand-lg navbar-ekop sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand brand-logo" href="<?= base_url('index.php/dashboard') ?>">
+            <i class="fas fa-handshake"></i> MITRA SEJAHTERA
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"><i class="fas fa-bars"></i></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link nav-link-custom <?= ($this->uri->segment(1) == 'dashboard') ? 'active' : '' ?>" href="<?= base_url('index.php/dashboard') ?>">Beranda</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-custom <?= ($this->uri->segment(1) == 'anggota') ? 'active' : '' ?>" href="<?= base_url('index.php/anggota') ?>">Data Anggota</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-custom <?= ($this->uri->segment(1) == 'simpanan') ? 'active' : '' ?>" href="<?= base_url('index.php/simpanan') ?>">Simpanan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-custom <?= ($this->uri->segment(1) == 'pinjaman') ? 'active' : '' ?>" href="<?= base_url('index.php/pinjaman') ?>">Pinjaman</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-custom <?= ($this->uri->segment(1) == 'laporan') ? 'active' : '' ?>" href="<?= base_url('index.php/laporan') ?>">Laporan</a>
+                </li>
+            </ul>
+
+            <div class="navbar-nav ml-auto">
+                <a href="<?= base_url('index.php/auth/logout') ?>" class="nav-link btn-logout">
+                    <i class="fas fa-sign-out-alt mr-1"></i> Keluar
+                </a>
+            </div>
         </div>
     </div>
-    <div id="page-content-wrapper">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <span class="navbar-text">Selamat Datang, <strong>Admin Koperasi</strong></span>
-            </div>
-        </nav>
-        <div class="container-fluid p-4">
+</nav>
+
+<div class="container-main">
