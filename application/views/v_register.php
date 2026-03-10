@@ -3,78 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Anggota | Koperasi Kita</title>
+    <title>Daftar Akun | Koperasi Kita</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body, html { height: 100%; margin: 0; font-family: 'Segoe UI', sans-serif; }
         .bg {
-            background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1350&q=80');
-            height: 100%; background-position: center; background-repeat: no-repeat; background-size: cover;
-            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            height: 100%; display: flex; align-items: center; justify-content: center;
         }
         .register-box {
             width: 100%; max-width: 450px; padding: 40px;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); border-radius: 15px; text-align: center;
+            background: white; box-shadow: 0 15px 35px rgba(0,0,0,0.4); border-radius: 20px; text-align: center;
         }
-        .logo-koperasi { width: 80px; margin-bottom: 15px; }
-        .form-control { background: #f1f3f5; border: none; border-radius: 5px; padding: 12px; height: auto; }
-        .btn-register { background-color: #00b894; border: none; color: white; padding: 12px; font-weight: bold; transition: 0.3s; }
-        .btn-register:hover { background-color: #009678; transform: scale(1.02); color: white; }
-        .input-group-text { background: #f1f3f5; border: none; cursor: pointer; }
-        .auth-footer a { color: #00b894; text-decoration: none; font-weight: 600; }
+        .form-control { background: #f1f3f5; border: 1px solid #ddd; border-radius: 10px; padding: 12px; height: auto; }
+        .input-group-text { background: #f1f3f5; border: 1px solid #ddd; border-radius: 10px 0 0 10px; color: #555; }
+        .input-group .form-control { border-radius: 0 10px 10px 0; }
+        .eye-icon { border-radius: 0 10px 10px 0 !important; cursor: pointer; border-left: none; }
+        .password-field { border-radius: 0 !important; }
+        .btn-register { background-color: #2c5364; border: none; color: white; padding: 12px; font-weight: bold; border-radius: 10px; transition: 0.3s; margin-top: 10px; }
+        .btn-register:hover { background-color: #203a43; transform: scale(1.02); color: white; }
     </style>
 </head>
 <body>
 <div class="bg">
-    <div class="register-box shadow-lg">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Logo_Koperasi_Indonesia_%282015%29.svg/1200px-Logo_Koperasi_Indonesia_%282015%29.svg.png" class="logo-koperasi">
-        <h4 class="mb-4 font-weight-bold" style="color: #2d3436;">DAFTAR ANGGOTA BARU</h4>
+    <div class="register-box">
+        <h3 class="mb-4 font-weight-bold" style="color: #2d3436; letter-spacing: 1px;">DAFTAR AKUN BARU</h3>
         
-        <form action="<?= base_url('index.php/auth/register_aksi'); ?>" method="post">
+        <form action="<?= base_url('index.php/auth/register_aksi'); ?>" method="post" onsubmit="return validateRegister()">
             <div class="form-group text-left">
                 <label class="small font-weight-bold">Nama Lengkap</label>
-                <input type="text" name="nama_admin" class="form-control" placeholder="Masukkan Nama Lengkap" required>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-id-card"></i></span></div>
+                    <input type="text" name="nama_admin" class="form-control" placeholder="Nama Anda" required>
+                </div>
             </div>
             
             <div class="form-group text-left">
                 <label class="small font-weight-bold">Username</label>
-                <input type="text" name="username" class="form-control" placeholder="Buat Username" required>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-user"></i></span></div>
+                    <input type="text" name="username" class="form-control" placeholder="Buat Username" required>
+                </div>
             </div>
 
             <div class="form-group text-left">
                 <label class="small font-weight-bold">Password</label>
                 <div class="input-group">
-                    <input type="password" name="password" id="password" class="form-control" placeholder="Buat Password" required>
-                    <div class="input-group-append">
-                        <span class="input-group-text" onclick="togglePassword('password', 'eye-icon')">
-                            <i class="fas fa-eye" id="eye-icon"></i>
-                        </span>
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-lock"></i></span></div>
+                    <input type="password" name="password" id="reg_pw" class="form-control password-field" placeholder="Buat Password" required>
+                    <div class="input-group-append" onclick="toggleView('reg_pw', 'eye_reg')">
+                        <span class="input-group-text eye-icon"><i class="fas fa-eye-slash" id="eye_reg"></i></span>
                     </div>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-register btn-block shadow mt-4">DAFTAR SEKARANG</button>
+            <div class="form-group text-left">
+                <label class="small font-weight-bold">Ulangi Password</label>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-check-double"></i></span></div>
+                    <input type="password" id="reg_pw2" class="form-control password-field" placeholder="Konfirmasi Password" required>
+                    <div class="input-group-append" onclick="toggleView('reg_pw2', 'eye_reg2')">
+                        <span class="input-group-text eye-icon"><i class="fas fa-eye-slash" id="eye_reg2"></i></span>
+                    </div>
+                </div>
+                <small id="reg_msg" class="text-danger font-italic" style="display:none;">* Password tidak cocok!</small>
+            </div>
+
+            <button type="submit" class="btn btn-register btn-block shadow-sm">DAFTAR SEKARANG</button>
         </form>
         
-        <div class="auth-footer mt-4">
-            <a href="<?= base_url('index.php/auth'); ?>"><i class="fas fa-arrow-left"></i> Sudah punya akun? Login</a>
+        <div class="mt-4">
+            <a href="<?= base_url('index.php/auth'); ?>" style="color: #2c5364; text-decoration: none; font-weight: 600;"><i class="fas fa-arrow-left"></i> Kembali ke Login</a>
         </div>
     </div>
 </div>
 
 <script>
-    function togglePassword(inputId, iconId) {
-        const passwordInput = document.getElementById(inputId);
-        const eyeIcon = document.getElementById(iconId);
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            eyeIcon.classList.replace("fa-eye", "fa-eye-slash");
+    function toggleView(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.replace("fa-eye-slash", "fa-eye");
         } else {
-            passwordInput.type = "password";
-            eyeIcon.classList.replace("fa-eye-slash", "fa-eye");
+            input.type = "password";
+            icon.classList.replace("fa-eye", "fa-eye-slash");
         }
+    }
+
+    function validateRegister() {
+        const p1 = document.getElementById("reg_pw").value;
+        const p2 = document.getElementById("reg_pw2").value;
+        if (p1 !== p2) {
+            document.getElementById("reg_msg").style.display = "block";
+            return false;
+        }
+        return true;
     }
 </script>
 </body>

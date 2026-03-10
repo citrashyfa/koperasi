@@ -109,8 +109,8 @@
                     <a class="nav-link nav-link-custom <?= ($this->uri->segment(1) == 'pinjaman') ? 'active' : '' ?>" href="<?= base_url('index.php/pinjaman') ?>">Pinjaman</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link nav-link-custom <?= ($this->uri->segment(1) == 'laporan') ? 'active' : '' ?>" href="<?= base_url('index.php/laporan') ?>">Laporan</a>
-                </li>
+    <a class="nav-link" href="<?= base_url('index.php/laporan'); ?>">Laporan</a>
+</li>
             </ul>
 
             <div class="navbar-nav ml-auto">

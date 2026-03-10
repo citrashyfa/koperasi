@@ -6,97 +6,90 @@
     <title>Reset Password | Koperasi Kita</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <style>
-        body, html { height: 100%; margin: 0; font-family: 'Segoe UI', sans-serif; }
+        body, html { height: 100%; margin: 0; font-family: 'Poppins', sans-serif; }
         .bg {
-            background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1350&q=80');
-            height: 100%; background-position: center; background-repeat: no-repeat; background-size: cover;
-            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px;
         }
         .reset-box {
-            width: 100%; max-width: 400px; padding: 40px;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); border-radius: 15px; text-align: center;
+            width: 100%; max-width: 400px; padding: 40px 35px;
+            background: #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-radius: 20px; text-align: center;
         }
-        .form-control { background: #f1f3f5; border: none; border-radius: 5px; padding: 12px; height: auto; }
-        
-        /* Warna Hijau Toska disamakan dengan Login/Register */
-        .btn-reset { background-color: #00b894; border: none; color: white; padding: 12px; font-weight: bold; transition: 0.3s; }
-        .btn-reset:hover { background-color: #009678; transform: scale(1.02); color: white; }
-        
-        .input-group-text { background: #f1f3f5; border: none; cursor: pointer; }
-        .auth-footer a { color: #00b894; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+        .auth-header h3 { font-weight: 700; color: #333; letter-spacing: 1px; }
+        .form-control { background: #f4f7f6; border: 1px solid #ddd; border-radius: 10px; padding: 12px 15px; height: auto; transition: 0.3s; }
+        .form-control:focus { background: #fff; border-color: #2c5364; box-shadow: 0 0 8px rgba(44, 83, 100, 0.2); outline: none; }
+        .input-group-text { background: #f4f7f6; border: 1px solid #ddd; border-radius: 10px 0 0 10px; color: #888; }
+        .input-group > .form-control { border-radius: 0 10px 10px 0; }
+        .btn-reset { background: #2c5364; border: none; color: white; padding: 14px; font-weight: 600; border-radius: 10px; transition: 0.4s; margin-top: 15px; text-transform: uppercase; }
+        .btn-reset:hover { background: #203a43; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); color: white; }
+        .auth-footer { margin-top: 25px; font-size: 0.85rem; }
+        .auth-footer a { color: #2c5364; text-decoration: none; font-weight: 600; }
     </style>
 </head>
 <body>
+
 <div class="bg">
-    <div class="reset-box shadow-lg">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Logo_Koperasi_Indonesia_%282015%29.svg/1200px-Logo_Koperasi_Indonesia_%282015%29.svg.png" style="width: 80px; margin-bottom: 15px;">
-        <h4 class="mb-4 font-weight-bold" style="color: #2d3436;">RESET PASSWORD</h4>
-        
-        <form action="<?= base_url('index.php/auth/reset_aksi'); ?>" method="post">
+    <div class="reset-box">
+        <div class="auth-header mb-4">
+            <h3>RESET PASSWORD</h3>
+            <p class="text-muted small">Masukkan username dan ulangi password baru Anda</p>
+        </div>
+
+        <?php if($this->session->flashdata('error')): ?>
+            <div class="alert alert-danger small p-2"><?= $this->session->flashdata('error'); ?></div>
+        <?php endif; ?>
+
+        <form action="<?= base_url('index.php/auth/reset_aksi'); ?>" method="post" onsubmit="return validatePassword()">
             <div class="form-group text-left">
                 <label class="small font-weight-bold">Username</label>
-                <input type="text" name="username" class="form-control" placeholder="Username Anda" required>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-user"></i></span></div>
+                    <input type="text" name="username" class="form-control" placeholder="Username Anda" required autofocus>
+                </div>
             </div>
 
             <div class="form-group text-left">
                 <label class="small font-weight-bold">Password Baru</label>
                 <div class="input-group">
-                    <input type="password" name="password_baru" id="password_baru" class="form-control" placeholder="******" required>
-                    <div class="input-group-append">
-                        <span class="input-group-text" onclick="togglePassword('password_baru', 'eye-1')">
-                            <i class="fas fa-eye" id="eye-1"></i>
-                        </span>
-                    </div>
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-lock"></i></span></div>
+                    <input type="password" name="password_baru" id="pw1" class="form-control" placeholder="Buat Password Baru" required>
                 </div>
             </div>
 
-            <div class="form-group mb-2 text-left">
+            <div class="form-group text-left mb-4">
                 <label class="small font-weight-bold">Konfirmasi Password Baru</label>
                 <div class="input-group">
-                    <input type="password" id="confirm_password" class="form-control" placeholder="******" required>
-                    <div class="input-group-append">
-                        <span class="input-group-text" onclick="togglePassword('confirm_password', 'eye-2')">
-                            <i class="fas fa-eye" id="eye-2"></i>
-                        </span>
-                    </div>
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-check-circle"></i></span></div>
+                    <input type="password" id="pw2" class="form-control" placeholder="Ulangi Password Baru" required>
                 </div>
-                <small id="msg" class="font-italic"></small>
+                <small id="msg" class="text-danger font-italic" style="display:none;">* Password tidak cocok!</small>
             </div>
-
-            <button type="submit" id="btnReset" class="btn btn-reset btn-block shadow mt-4">UPDATE PASSWORD</button>
+            
+            <button type="submit" class="btn btn-reset btn-block">Perbarui Password</button>
         </form>
-        
-        <div class="auth-footer mt-4">
+
+        <div class="auth-footer">
             <a href="<?= base_url('index.php/auth'); ?>"><i class="fas fa-arrow-left"></i> Kembali ke Login</a>
         </div>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
-    function togglePassword(inputId, iconId) {
-        const passwordInput = document.getElementById(inputId);
-        const eyeIcon = document.getElementById(iconId);
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            eyeIcon.classList.replace("fa-eye", "fa-eye-slash");
-        } else {
-            passwordInput.type = "password";
-            eyeIcon.classList.replace("fa-eye-slash", "fa-eye");
-        }
-    }
+    function validatePassword() {
+        var pw1 = document.getElementById("pw1").value;
+        var pw2 = document.getElementById("pw2").value;
+        var msg = document.getElementById("msg");
 
-    $('#confirm_password, #password_baru').on('keyup', function () {
-        if ($('#password_baru').val() == $('#confirm_password').val() && $('#password_baru').val() != "") {
-            $('#msg').html('<i class="fas fa-check-circle"></i> Password Cocok').css('color', '#00b894');
-            $('#btnReset').prop('disabled', false);
-        } else {
-            $('#msg').html('<i class="fas fa-times-circle"></i> Password Tidak Cocok').css('color', '#d63031');
-            $('#btnReset').prop('disabled', true);
+        if (pw1 != pw2) {
+            msg.style.display = "block";
+            return false; // Mencegah form dikirim
         }
-    });
+        return true;
+    }
 </script>
+
 </body>
 </html>

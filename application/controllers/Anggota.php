@@ -8,48 +8,74 @@ class Anggota extends CI_Controller {
         $this->load->model('M_koperasi');
         $this->load->helper('url');
 
-        // Cek status login
+        // PROTEKSI LOGIN: Jika belum login, tendang ke halaman login
         if($this->session->userdata('status') != "login"){
             redirect(base_url("index.php/auth"));
         }
     }
 
+    // 1. Menampilkan Data Anggota
     public function index() {
-    $data['anggota'] = $this->M_koperasi->get_all_anggota();
-    $this->load->view('layout/header');
-    $this->load->view('v_anggota', $data);
-    $this->load->view('layout/footer');
+        $data['anggota'] = $this->db->get('anggota')->result(); 
+        
+        $this->load->view('layout/header');
+        $this->load->view('v_anggota', $data);
+        $this->load->view('layout/footer');
     }
 
-    public function simpan() {
+    // 2. Aksi Tambah Anggota Baru
+    public function tambah_aksi() {
         $data = [
-            'nama_lengkap' => $this->input->post('nama'), // Nama kolom di DB adalah 'nama_lengkap'
+            'nama_lengkap' => $this->input->post('nama'),
+            'username'     => $this->input->post('user'), // Menambahkan username agar login lancar
+            'password'     => md5($this->input->post('pass')), // Menambahkan password (enkripsi MD5)
             'alamat'       => $this->input->post('alamat'),
-            'no_telp'      => $this->input->post('no_telp')
+            'no_telp'      => $this->input->post('telp'),
+            'id_jabatan'   => 2 // Default: 2 (Anggota biasa)
         ];
+        
         $this->db->insert('anggota', $data);
         redirect(base_url('index.php/anggota'));
     }
 
-    // Fungsi hapus cukup satu saja di sini
-    public function hapus($id) {
-        $this->db->where('id_anggota', $id); // Primary key di DB adalah 'id_anggota'
-        $this->db->delete('anggota');
-        redirect(base_url('index.php/anggota'));
+    // 3. Menampilkan Halaman Edit (Membawa Data Lama)
+    public function edit($id) {
+        $data['anggota'] = $this->db->get_where('anggota', ['id_anggota' => $id])->row();
+        
+        if(!$data['anggota']) {
+            redirect(base_url('index.php/anggota'));
+        }
+
+        $this->load->view('layout/header');
+        $this->load->view('v_anggota_edit', $data); // Pastikan kamu buat file v_anggota_edit.php
+        $this->load->view('layout/footer');
     }
 
-    public function update() {
-        // Disesuaikan dengan primary key database: id_anggota
-        $id = $this->input->post('id');
+    // 4. Aksi Update Data Anggota
+    public function update_aksi() {
+        $id = $this->input->post('id_anggota');
         $data = [
             'nama_lengkap' => $this->input->post('nama'),
+            'username'     => $this->input->post('user'),
             'alamat'       => $this->input->post('alamat'),
-            'no_telp'      => $this->input->post('no_telp')
+            'no_telp'      => $this->input->post('telp')
         ];
+
+        // Update password hanya jika diisi di form edit
+        $password = $this->input->post('pass');
+        if(!empty($password)) {
+            $data['password'] = md5($password);
+        }
+
         $this->db->where('id_anggota', $id); 
         $this->db->update('anggota', $data);
         redirect(base_url('index.php/anggota'));
     }
-    
-    // Fungsi hapus yang tadinya ada di sini sudah saya hapus karena duplikat
+
+    // 5. Aksi Hapus Anggota
+    public function hapus($id) {
+        $this->db->where('id_anggota', $id);
+        $this->db->delete('anggota');
+        redirect(base_url('index.php/anggota'));
+    }
 }

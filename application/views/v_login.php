@@ -6,76 +6,162 @@
     <title>Login | Koperasi Kita</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <style>
-        body, html { height: 100%; margin: 0; font-family: 'Segoe UI', sans-serif; }
+        body, html { 
+            height: 100%; 
+            margin: 0; 
+            font-family: 'Poppins', sans-serif; 
+        }
+        
+        /* Background baru menggunakan Gradient Biru-Gelap yang elegan */
         .bg {
-            background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1350&q=80');
-            height: 100%; background-position: center; background-repeat: no-repeat; background-size: cover;
-            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            height: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
         }
+
         .login-box {
-            width: 100%; max-width: 400px; padding: 40px;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); border-radius: 15px; text-align: center;
+            width: 100%; 
+            max-width: 400px; 
+            padding: 45px 35px;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+            border-radius: 20px; 
+            text-align: center;
         }
-        .logo-koperasi { width: 100px; margin-bottom: 20px; }
-        .form-control { background: #f1f3f5; border: none; border-radius: 5px; padding: 12px; height: auto; }
-        .btn-login { background-color: #00b894; border: none; color: white; padding: 12px; font-weight: bold; transition: 0.3s; text-transform: uppercase; }
-        .btn-login:hover { background-color: #009678; transform: scale(1.02); color: white; }
-        .input-group-text { background: #f1f3f5; border: none; cursor: pointer; }
-        .auth-footer { margin-top: 25px; font-size: 0.9rem; }
-        .auth-footer a { color: #00b894; text-decoration: none; font-weight: 600; }
+
+        .auth-header h3 {
+            font-weight: 700;
+            color: #333;
+            letter-spacing: 1px;
+        }
+
+        .form-control { 
+            background: #f4f7f6; 
+            border: 1px solid #ddd; 
+            border-radius: 10px; 
+            padding: 12px 15px; 
+            height: auto; 
+            transition: 0.3s;
+        }
+        
+        .form-control:focus { 
+            background: #fff; 
+            border-color: #2c5364; 
+            box-shadow: 0 0 8px rgba(44, 83, 100, 0.2);
+        }
+
+        .input-group-text { 
+            background: #f4f7f6; 
+            border: 1px solid #ddd; 
+            border-radius: 10px 0 0 10px;
+            color: #888;
+        }
+
+        /* Perbaikan untuk lengkungan input group */
+        .input-group > .form-control {
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .input-group > .password-input {
+            border-radius: 0;
+        }
+
+        .eye-box {
+            border-radius: 0 10px 10px 0 !important;
+            cursor: pointer;
+        }
+
+        .btn-login { 
+            background: #2c5364; 
+            border: none; 
+            color: white; 
+            padding: 14px; 
+            font-weight: 600; 
+            border-radius: 10px;
+            transition: 0.4s; 
+            margin-top: 10px;
+        }
+
+        .btn-login:hover { 
+            background: #203a43; 
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .auth-footer { margin-top: 30px; font-size: 0.85rem; color: #777; }
+        .auth-footer a { color: #2c5364; text-decoration: none; font-weight: 600; }
+        .auth-footer a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
 <div class="bg">
-    <div class="login-box shadow-lg">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Logo_Koperasi_Indonesia_%282015%29.svg/1200px-Logo_Koperasi_Indonesia_%282015%29.svg.png" alt="Logo" class="logo-koperasi">
-        
-        <h4 class="mb-4 font-weight-bold" style="color: #2d3436;">LOGIN SYSTEM</h4>
+    <div class="login-box">
+        <div class="auth-header mb-4">
+            <h3>SELAMAT DATANG</h3>
+            <p class="text-muted small">Silakan masuk ke sistem koperasi</p>
+        </div>
 
         <form action="<?= base_url('index.php/auth/login_aksi'); ?>" method="post">
             <div class="form-group text-left">
-                <label class="small font-weight-bold">Username</label>
-                <input type="text" name="username" class="form-control" placeholder="Masukkan Username" required autofocus>
+                <label class="small font-weight-bold">Username / Kode Anggota</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    </div>
+                    <input type="text" name="username" class="form-control" placeholder="Masukkan Username" required autofocus>
+                </div>
             </div>
             
             <div class="form-group mb-4 text-left">
                 <label class="small font-weight-bold">Password</label>
                 <div class="input-group">
-                    <input type="password" name="password" id="password" class="form-control" placeholder="Masukkan Password" required>
-                    <div class="input-group-append">
-                        <span class="input-group-text" onclick="togglePassword()">
-                            <i class="fas fa-eye" id="eye-icon"></i>
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    </div>
+                    <input type="password" name="password" id="password" class="form-control password-input" placeholder="Masukkan Password" required>
+                    <div class="input-group-append" onclick="togglePassword()">
+                        <span class="input-group-text eye-box">
+                            <i class="fas fa-eye-slash" id="eye-icon"></i>
                         </span>
                     </div>
                 </div>
             </div>
             
-            <button type="submit" class="btn btn-login btn-block shadow">Masuk Sekarang</button>
+            <button type="submit" class="btn btn-login btn-block">MASUK SEKARANG</button>
         </form>
 
         <div class="auth-footer">
-            <a href="<?= base_url('index.php/auth/register'); ?>">Daftar Akun</a> 
-            <span class="mx-2 text-muted">|</span>
-            <a href="<?= base_url('index.php/auth/reset_password'); ?>">Lupa Password?</a>
+            Belum punya akun? <a href="<?= base_url('index.php/auth/register'); ?>">Daftar Anggota</a> 
+            <br>
+            <a href="<?= base_url('index.php/auth/reset_password'); ?>" class="text-muted d-inline-block mt-2">Lupa Password?</a>
         </div>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
     function togglePassword() {
         const passwordInput = document.getElementById("password");
         const eyeIcon = document.getElementById("eye-icon");
         
         if (passwordInput.type === "password") {
+            // Munculkan huruf
             passwordInput.type = "text";
-            eyeIcon.classList.replace("fa-eye", "fa-eye-slash");
+            // Icon berubah jadi mata terbuka (sedang melihat)
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
         } else {
+            // Jadi titik-titik lagi
             passwordInput.type = "password";
-            eyeIcon.classList.replace("fa-eye-slash", "fa-eye");
+            // Icon berubah jadi mata dicoret
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
         }
     }
 </script>
