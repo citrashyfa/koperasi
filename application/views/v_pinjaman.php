@@ -1,72 +1,105 @@
 <div class="container-fluid mt-4 mb-5 px-md-5"> 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h3 class="font-weight-bold text-dark mb-1">Data Pinjaman Anggota</h3>
-            <p class="text-secondary small">Kelola pengajuan dan status pinjaman Mitra Sejahtera.</p>
+            <h3 class="font-weight-bold text-dark mb-1">Manajemen Pinjaman Anggota</h3>
+            <p class="text-secondary small">Kelola persetujuan pengajuan dan status pembayaran anggota secara sistematis.</p>
         </div>
-        <button class="btn btn-danger shadow-sm px-4" style="border-radius: 8px; font-weight: 600;" data-toggle="modal" data-target="#modalPinjaman">
-            <i class="fas fa-plus mr-2"></i> Tambah Pinjaman
-        </button>
-    </div>
+        </div>
 
-    <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+    <div class="card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden;">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="bg-light">
-                        <tr class="text-dark small font-weight-bold"> 
-                            <th class="border-0 px-4 py-3 text-center" width="5%">NO</th>
-                            <th class="border-0 py-3">NAMA ANGGOTA</th>
-                            <th class="border-0 py-3 text-right">JUMLAH PINJAMAN</th>
-                            <th class="border-0 py-3 text-center">STATUS</th>
-                            <th class="border-0 py-3 text-center" width="20%">AKSI</th>
+                    <thead style="background-color: #28a745; color: white;">
+                        <tr> 
+                            <th class="border-0 px-4 py-4 text-center text-white" width="5%">NO</th>
+                            <th class="border-0 py-4 text-white">DETAIL ANGGOTA</th>
+                            <th class="border-0 py-4 text-right text-white">NOMINAL</th>
+                            <th class="border-0 py-4 text-center text-white">TENOR</th>
+                            <th class="border-0 py-4 text-center text-white">CICILAN/BLN</th>
+                            <th class="border-0 py-4 text-center text-white">JATUH TEMPO</th>
+                            <th class="border-0 py-4 text-center text-white">STATUS</th>
+                            <th class="border-0 py-4 text-center text-white">AKSI MANAJEMEN</th>
+                            <th class="border-0 py-4 text-center text-white" width="10%">OPSI</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if(!empty($pinjaman)): ?>
-                            <?php $n=1; foreach($pinjaman as $p): ?>
-                            <tr class="align-middle text-dark">
-                                <td class="px-4 text-center font-weight-bold"><?= $n++; ?></td>
+                            <?php $n=1; foreach($pinjaman as $p): 
+                                $st = strtolower(trim($p->status)); 
+                                $cicilan_tabel = ($p->jangka_waktu > 0) ? ($p->jumlah_pinjaman / $p->jangka_waktu) : 0;
+                            ?>
+                            <tr class="align-middle">
+                                <td class="px-4 text-center font-weight-bold text-muted"><?= $n++; ?></td>
                                 <td class="py-3">
-                                    <div class="font-weight-bold"><?= $p->nama_lengkap; ?></div>
-                                    <div class="text-secondary small">Tgl Pinjam: <?= date('d/m/Y', strtotime($p->tgl_pinjam)); ?></div>
+                                    <div class="font-weight-bold text-dark"><?= $p->nama_lengkap; ?></div>
+                                    <div class="text-muted small"><i class="far fa-calendar-alt mr-1"></i> <?= date('d/m/Y', strtotime($p->tgl_pinjaman)); ?></div>
                                 </td>
                                 <td class="py-3 text-right">
-                                    <span class="font-weight-bold <?= $p->status == 'Lunas' ? 'text-secondary' : 'text-danger'; ?>">
-                                        Rp <?= number_format($p->nominal, 0, ',', '.'); ?>
+                                    <span class="font-weight-bold text-dark">
+                                        Rp <?= number_format($p->jumlah_pinjaman, 0, ',', '.'); ?>
                                     </span>
                                 </td>
                                 <td class="py-3 text-center">
-                                    <?php if($p->status == 'Lunas'): ?>
-                                        <span class="badge badge-success px-3 py-2" style="border-radius: 20px;">
-                                            <i class="fas fa-check-circle mr-1"></i> <?= $p->status; ?>
-                                        </span>
+                                    <span class="badge badge-light border text-dark px-3" style="border-radius: 5px;"><?= $p->jangka_waktu; ?> Bln</span>
+                                </td>
+                                <td class="py-3 text-center font-weight-bold text-primary">
+                                    Rp <?= number_format($cicilan_tabel, 0, ',', '.'); ?>
+                                </td>
+                                <td class="py-3 text-center text-muted small">
+                                    <?= ($p->tgl_jatuh_tempo) ? date('d/m/Y', strtotime($p->tgl_jatuh_tempo)) : '-'; ?>
+                                </td>
+                                <td class="py-3 text-center">
+                                    <?php 
+                                        if($st == 'pending' || $st == 'menunggu acc' || $st == '') {
+                                            echo '<span class="badge badge-warning text-white px-3 py-2 shadow-sm" style="border-radius: 30px; font-size: 11px;"><i class="fas fa-clock mr-1"></i> MENUNGGU ACC</span>';
+                                        } elseif($st == 'belum lunas') {
+                                            echo '<span class="badge badge-primary px-3 py-2 shadow-sm" style="border-radius: 30px; font-size: 11px;"><i class="fas fa-hand-holding-usd mr-1"></i> BELUM LUNAS</span>';
+                                        } elseif($st == 'lunas') {
+                                            echo '<span class="badge badge-success px-3 py-2 shadow-sm" style="border-radius: 30px; font-size: 11px;"><i class="fas fa-check-circle mr-1"></i> LUNAS</span>';
+                                        } elseif($st == 'ditolak') {
+                                            echo '<span class="badge badge-danger px-3 py-2 shadow-sm" style="border-radius: 30px; font-size: 11px;"><i class="fas fa-times-circle mr-1"></i> DITOLAK</span>';
+                                        }
+                                    ?>
+                                </td>
+                                <td class="py-3 text-center">
+                                    <?php if($st == 'pending' || $st == 'menunggu acc' || $st == ''): ?>
+                                        <div class="btn-group shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                                            <a href="<?= base_url('index.php/pinjaman/acc_pinjaman/'.$p->id_pinjaman); ?>" 
+                                               class="btn btn-sm btn-success px-3 btn-action" 
+                                               data-title="Setujui Pinjaman?" data-text="Dana akan dialokasikan ke anggota.">
+                                                <i class="fas fa-check mr-1"></i> Terima
+                                            </a>
+                                            <a href="<?= base_url('index.php/pinjaman/tolak_pinjaman/'.$p->id_pinjaman); ?>" 
+                                               class="btn btn-sm btn-white text-danger border-left btn-action"
+                                               data-title="Tolak Pengajuan?" data-text="Pengajuan akan ditandai sebagai ditolak.">
+                                                <i class="fas fa-times mr-1"></i> Tolak
+                                            </a>
+                                        </div>
+                                    <?php elseif($st == 'belum lunas'): ?>
+                                        <a href="<?= base_url('index.php/pinjaman/set_lunas/'.$p->id_pinjaman); ?>" 
+                                           class="btn btn-sm btn-info px-4 shadow-sm btn-action"
+                                           style="border-radius: 8px;"
+                                           data-title="Set Lunas?" data-text="Pastikan pembayaran sudah diterima secara penuh.">
+                                            <i class="fas fa-money-bill-wave mr-1"></i> Tandai Lunas
+                                        </a>
                                     <?php else: ?>
-                                        <span class="badge badge-warning px-3 py-2" style="border-radius: 20px;">
-                                            <?= $p->status; ?>
-                                        </span>
+                                        <span class="text-muted small font-italic">Selesai</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="py-3 text-center">
-                                    <?php if($p->status == 'Belum Lunas'): ?>
-                                        <a href="<?= base_url('index.php/pinjaman/set_lunas/'.$p->id_pinjaman); ?>" 
-                                           class="btn btn-sm btn-outline-success border-0 px-3 mr-1" 
-                                           onclick="return confirm('Tandai pinjaman ini sebagai Lunas?')">
-                                            <i class="fas fa-check"></i> Lunas
-                                        </a>
-                                    <?php endif; ?>
-
                                     <a href="<?= base_url('index.php/pinjaman/hapus/'.$p->id_pinjaman); ?>" 
-                                       class="btn btn-sm btn-outline-danger border-0 px-2" 
-                                       onclick="return confirm('Hapus data pinjaman ini?')">
-                                        <i class="fas fa-trash"></i>
+                                       class="btn btn-sm btn-danger px-3 btn-delete" 
+                                       style="border-radius: 8px; font-weight: 600;" 
+                                       title="Blokir Data">
+                                        <i class="fas fa-ban mr-1"></i> Blokir
                                     </a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="5" class="text-center py-5 text-secondary font-italic">Belum ada data pinjaman.</td>
+                                <td colspan="9" class="text-center py-5 text-secondary font-italic">Data pinjaman kosong.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
@@ -76,43 +109,52 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalPinjaman" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
-            <div class="modal-header border-0 px-4 pt-4">
-                <h5 class="font-weight-bold">Input Pinjaman Baru</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <form action="<?= base_url('index.php/pinjaman/tambah_aksi'); ?>" method="post">
-                <div class="modal-body px-4 text-dark">
-                    <div class="form-group mb-3">
-                        <label class="small font-weight-bold">Pilih Anggota</label>
-                        <select name="id_anggota" class="form-control bg-light border-0" required>
-                            <option value="">-- Pilih Nama --</option>
-                            <?php foreach($anggota_list as $al): ?>
-                                <option value="<?= $al->id_anggota; ?>"><?= $al->nama_lengkap; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label class="small font-weight-bold">Besar Pinjaman (Rp)</label>
-                        <input type="number" name="nominal" class="form-control bg-light border-0" placeholder="Misal: 1000000" required>
-                    </div>
-                    <div class="form-group mb-0">
-                        <label class="small font-weight-bold">Tanggal Pinjam</label>
-                        <input type="date" name="tanggal" class="form-control bg-light border-0" value="<?= date('Y-m-d'); ?>" required>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 px-4 pb-4">
-                    <button type="submit" class="btn btn-danger btn-block py-2 font-weight-bold" style="border-radius: 8px;">SIMPAN PINJAMAN</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <style>
-    .table td { vertical-align: middle !important; }
-    .btn-outline-success:hover { background-color: #28a745; color: white; }
-    .btn-outline-danger:hover { background-color: #dc3545; color: white; }
+    .table thead th { text-transform: uppercase; letter-spacing: 0.5px; border-bottom: none !important; font-size: 11px; }
+    .btn-action:hover { filter: brightness(95%); }
+    .btn-delete:hover { transform: scale(1.05); filter: brightness(90%); }
+    .form-control:focus { border-color: #28a745; box-shadow: none; }
 </style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+$(document).ready(function() {
+    // Popup Konfirmasi Aksi (Terima/Tolak/Lunas)
+    $(document).on('click', '.btn-action', function(e) {
+        e.preventDefault();
+        const url = $(this).attr('href');
+        Swal.fire({
+            title: $(this).data('title'),
+            text: $(this).data('text'),
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Lanjutkan!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) { window.location.href = url; }
+        });
+    });
+
+    // Popup Konfirmasi Blokir/Hapus
+    $(document).on('click', '.btn-delete', function(e) {
+        e.preventDefault();
+        const url = $(this).attr('href');
+        Swal.fire({
+            title: 'Blokir Data Pinjaman?',
+            text: "Data ini akan diblokir/dihapus secara permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Blokir!'
+        }).then((result) => {
+            if (result.isConfirmed) { window.location.href = url; }
+        });
+    });
+});
+</script>

@@ -35,7 +35,7 @@
                 <label class="small font-weight-bold">Nama Lengkap</label>
                 <div class="input-group">
                     <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-id-card"></i></span></div>
-                    <input type="text" name="nama_admin" class="form-control" placeholder="Nama Anda" required>
+                    <input type="text" name="nama_lengkap" class="form-control" placeholder="Nama Anda" required>
                 </div>
             </div>
             
